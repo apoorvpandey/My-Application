@@ -1,19 +1,18 @@
 package com.zoom.myapplication.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.zoom.myapplication.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-    val TAG: String = "kkkkkkkkk"
+    private lateinit var carouselAdapter: CarouselAdapter
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -30,13 +29,12 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-
-        homeViewModel.response.observe(viewLifecycleOwner) {
-            Log.d(TAG, "onCreateView: " + it.body()!!.data.banners.size)
+        val recyclerView = binding.carouselRecyclerView
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        homeViewModel.response.observe(viewLifecycleOwner) { apiResponse ->
+            carouselAdapter = CarouselAdapter(apiResponse.body()!!.data.banners, requireContext())
+            recyclerView.adapter = carouselAdapter
         }
         return root
 

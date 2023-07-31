@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <!-- Set the hint text color to your desired color -->
+        <item name="android:editTextColor">@color/black</item>
+    </style>
+
+</resources>
