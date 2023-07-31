@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zoom.myapplication.databinding.FragmentHomeBinding
 
@@ -13,6 +13,9 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var carouselAdapter: CarouselAdapter
+    private lateinit var categoryAdapter: CategoriesAdapter
+
+    private val homeViewModel: HomeViewModel by viewModels()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -23,21 +26,28 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val recyclerView = binding.carouselRecyclerView
+        val categoryRecyclerView = binding.categoryRecyclerView
+
         recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        homeViewModel.response.observe(viewLifecycleOwner) { apiResponse ->
-            carouselAdapter = CarouselAdapter(apiResponse.body()!!.data.banners, requireContext())
-            recyclerView.adapter = carouselAdapter
-        }
-        return root
+        categoryRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
+        homeViewModel.response.observe(viewLifecycleOwner) { apiResponse ->
+            val banners = apiResponse?.body()?.data?.banners ?: emptyList()
+            carouselAdapter = CarouselAdapter(banners, requireContext())
+            recyclerView.adapter = carouselAdapter
+
+            val foodCategories = apiResponse?.body()?.data?.foodCategories ?: emptyList()
+            categoryAdapter = CategoriesAdapter(foodCategories, requireContext())
+            categoryRecyclerView.adapter = categoryAdapter
+        }
+
+        return root
     }
 
     override fun onDestroyView() {

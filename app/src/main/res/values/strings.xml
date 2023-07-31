@@ -5,4 +5,6 @@
     <string name="title_profile">Profile</string>
     <string name="search">Search</string>
     <string name="home">Home</string>
+    <string name="category_image">Category Image</string>
+    <string name="carousel_image">Carousel Image</string>
 </resources>
