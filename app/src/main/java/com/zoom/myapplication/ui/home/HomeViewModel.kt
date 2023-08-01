@@ -18,6 +18,10 @@ class HomeViewModel : ViewModel() {
     val response: LiveData<Response<ApiResponse>>
         get() = _response
 
+    // New LiveData for loading state
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     init {
         val api = RetrofitClient.instance
         repository = HomeRepository(api)
@@ -26,13 +30,12 @@ class HomeViewModel : ViewModel() {
 
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.postValue(true)
             val response = repository.fetchData()
             _response.postValue(response)
+            _isLoading.postValue(false)
         }
     }
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
+
 }

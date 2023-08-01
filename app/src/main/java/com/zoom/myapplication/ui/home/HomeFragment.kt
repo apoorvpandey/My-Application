@@ -20,8 +20,6 @@ class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeViewModel by viewModels()
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -53,7 +51,6 @@ class HomeFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
 
-
         homeViewModel.response.observe(viewLifecycleOwner) { apiResponse ->
             val banners = apiResponse?.body()?.data?.banners ?: emptyList()
             carouselAdapter = CarouselAdapter(banners, requireContext())
@@ -78,6 +75,14 @@ class HomeFragment : Fragment() {
                 RestaurantCollectionAdapter(sortedRestaurantCollections, requireContext())
             restaurantCollectionRecyclerView.adapter = restaurantCollectionAdapter
 
+        }
+
+        homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
         }
 
         return root
